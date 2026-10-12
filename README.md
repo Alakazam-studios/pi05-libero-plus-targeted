@@ -34,9 +34,20 @@ LIBERO-Plus, all 10,030 cases, one trial per case, under the protocol that the p
 | `pi05_libero` (base) | 85.71 % | 84.72 % |
 | this model | 93.23 % | 93.09 % |
 
+Three training seeds of the last stage score 93.23 %, 93.23 % and 93.42 % (seven-axis mean). As of October 2026, this is
+the highest LIBERO-Plus score reported: the best entry of the public AllenAI leaderboard reports 92.4 %, and the best
+other fine-tuned model 92.0 %. Each paper uses its own evaluator, so this is an order of reported scores, not a
+controlled comparison. The model is in the fine-tuned category: it trains on the LIBERO-Plus training set.
+
 These scores use the language stage at test time: before it acts, the model's own language model rewrites each
 instruction into one of the 40 task instructions. Scores from another evaluator, or with raw prompts, can differ. The
-paper gives the per-factor scores, the intervals and the caveats.
+paper gives the per-factor scores, the intervals and the caveats. The per-case results, the code and the claim-by-claim
+evidence are in github.com/Alakazam-studios/targeted-data-libero-plus.
+
+## How to run
+
+Load the weights with openpi's `pi05_libero` config. The scores above use 5 flow steps (openpi's default is 10) and
+5 actions per query (openpi's LIBERO default), with the language stage decoding the instruction before each episode.
 
 ## Files
 
@@ -64,4 +75,10 @@ described above. They are not the original checkpoint.
 - Tested in simulation only, on LIBERO-Plus. The original LIBERO suites were not re-tested.
 - The language stage relies on LIBERO-Plus having 40 tasks: it maps any instruction to one of them, so it does not
   carry over to tasks outside that set.
-- The data sets were designed with knowledge of the benchmark's factors.
+- The data sets were built from the perturbation types and ranges that the LIBERO-Plus paper publishes (its Appendix
+  A).
+- 2.4 % of the recovery episodes (0.53 % of the training frames, all from the return phase) start from the object
+  placement of a LIBERO-Plus test case, with a different arm offset. The effect of this overlap was not measured.
+- About 2.4 points of the score come from the structure of the benchmark, measured on base `pi05_libero`: removing
+  the file-name text that the benchmark code appends to the instructions (+1.07 points), and mapping each
+  instruction onto the 40 tasks (+1.29 points).
