@@ -18,8 +18,8 @@ The main model of the paper *Find the Missing Skill, Build the Data: Targeted Da
 It is Physical Intelligence's public `pi05_libero` checkpoint (openpi), trained further in three stages:
 
 1. fine-tuning on the LIBERO-Plus training set and our recovery clips (robot starts moved by 0.1 to 0.5 rad);
-2. a language stage that trains only the language model, mapping each instruction to one of the 40 LIBERO task
-   instructions;
+2. a language stage that trains only the language model to rewrite each instruction into a task instruction; its
+   training outputs are the 40 LIBERO task instructions;
 3. a LoRA adapter stage in the vision encoder, trained on camera views that we re-rendered from moved cameras, with
    every view closer than 10 degrees to a test camera of the same task removed. The adapter is merged into these
    weights.
@@ -40,7 +40,7 @@ other fine-tuned model 92.0 %. Each paper uses its own evaluator, so this is an 
 controlled comparison. The model is in the fine-tuned category: it trains on the LIBERO-Plus training set.
 
 These scores use the language stage at test time: before it acts, the model's own language model rewrites each
-instruction into one of the 40 task instructions. Scores from another evaluator, or with raw prompts, can differ. The
+instruction into a task instruction (the case's own task instruction for 9,982 of the 10,030 cases). Scores from another evaluator, or with raw prompts, can differ. The
 paper gives the per-factor scores, the intervals and the caveats. The per-case results, the code and the claim-by-claim
 evidence are in github.com/Alakazam-studios/targeted-data-libero-plus.
 
@@ -73,8 +73,10 @@ described above. They are not the original checkpoint.
 ## Limitations
 
 - Tested in simulation only, on LIBERO-Plus. The original LIBERO suites were not re-tested.
-- The language stage relies on LIBERO-Plus having 40 tasks: it maps any instruction to one of them, so it does not
-  carry over to tasks outside that set.
+- The language stage rewrites each instruction as text, token by token. Its training outputs are only the 40 LIBERO
+  task instructions, so it fits a benchmark with those 40 tasks, but nothing restricts its output to them: of the
+  1,537 language cases, 1,489 decode to their own task, 39 to another of the 40, and 9 to text that is none of them.
+  It was not tested on tasks outside that set.
 - The data sets were built from the perturbation types and ranges that the LIBERO-Plus paper publishes (its Appendix
   A).
 - 2.4 % of the recovery episodes (0.53 % of the training frames, all from the return phase) start from the object
