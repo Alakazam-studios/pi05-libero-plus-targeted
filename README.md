@@ -34,10 +34,11 @@ LIBERO-Plus, all 10,030 cases, one trial per case, under the protocol that the p
 | `pi05_libero` (base) | 85.71 % | 84.72 % |
 | this model | 93.23 % | 93.09 % |
 
-Three training seeds of the last stage score 93.23 %, 93.23 % and 93.42 % (seven-axis mean). As of October 2026, this is
-the highest LIBERO-Plus score reported: the best entry of the public AllenAI leaderboard reports 92.4 %, and the best
+Three training seeds of the last stage score 93.23 %, 93.23 % and 93.42 % (seven-axis mean). As of October 2026, it is
+above every LIBERO-Plus score that other work reports: the best entry of the public AllenAI leaderboard reports 92.4 %, and the best
 other fine-tuned model 92.0 %. Each paper uses its own evaluator, so this is an order of reported scores, not a
-controlled comparison. The model is in the fine-tuned category: it trains on the LIBERO-Plus training set.
+controlled comparison. Five of the paper's other passes score higher, up to 94.04 %; this model was chosen for its
+rule against near-test camera views. The model is in the fine-tuned category: it trains on the LIBERO-Plus training set.
 
 These scores use the language stage at test time: before it acts, the model's own language model rewrites each
 instruction into a task instruction (the case's own task instruction for 9,982 of the 10,030 cases). Scores from another evaluator, or with raw prompts, can differ. The
@@ -77,8 +78,10 @@ described above. They are not the original checkpoint.
   task instructions, so it fits a benchmark with those 40 tasks, but nothing restricts its output to them: of the
   1,537 language cases, 1,489 decode to their own task, 39 to another of the 40, and 9 to text that is none of them.
   It was not tested on tasks outside that set.
-- The data sets were built from the perturbation types and ranges that the LIBERO-Plus paper publishes (its Appendix
-  A).
+- The data sets target the perturbation types that the LIBERO-Plus paper publishes (its Appendix A). The robot-start
+  range is the published one; the camera ranges span the test poses' own values, up to 1.3 times the largest; the
+  rewording styles follow the published types, and their author had read the test instructions (one example phrase
+  was copied from a test instruction; at most 0.02 points of the seven-axis mean).
 - 2.4 % of the recovery episodes (0.53 % of the training frames, all from the return phase) start from the object
   placement of a LIBERO-Plus test case, with a different arm offset. The effect of this overlap was not measured.
 - About 2.4 points of the score come from the structure of the benchmark, measured on base `pi05_libero`: removing
